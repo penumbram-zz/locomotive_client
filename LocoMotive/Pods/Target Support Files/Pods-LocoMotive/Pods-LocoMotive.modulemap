@@ -1,0 +1,6 @@
+framework module Pods_LocoMotive {
+  umbrella header "Pods-LocoMotive-umbrella.h"
+
+  export *
+  module * { export * }
+}
