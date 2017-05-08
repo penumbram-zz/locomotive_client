@@ -110,7 +110,7 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
         if isFirstAnimation {
             isFirstAnimation = false
             for prize in self.prizes {
-                self.addPrize(coordinate: CLLocationCoordinate2D(latitude: prize.latitude, longitude: prize.longitude))
+                self.addPrize(coordinate: CLLocationCoordinate2D(latitude: prize.value.latitude, longitude: prize.value.longitude))
             }
             isFirstAnimationComplete = true
         }
