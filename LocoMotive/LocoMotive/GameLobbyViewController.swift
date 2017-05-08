@@ -51,6 +51,7 @@ class GameLobbyViewController: UIViewController {
                     let startTime = json["game"]["startTime"]
                     let portValue = json["game"]["port"]
                     if startTime != JSON.null && startTime != "" && portValue != JSON.null {
+                        AlertViewManager.hideLoading()
                         print(startTime)
                         let dateString = startTime.string!
                         
@@ -107,6 +108,7 @@ class GameLobbyViewController: UIViewController {
     
     
     @IBAction func btnStartGameAction(_ sender: UIButton) {
+        AlertViewManager.showLoading()
         let startString = Util.secondsFromNow(30)
         NetworkManager.sharedInstance.request(urlString: "\(httpEndpoint)/game/start", method: .post ,parameters: [
             "gameId": User.sharedInstance.currentGameId,
@@ -162,7 +164,15 @@ class GameLobbyViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "gameViewControllerSegue", let gameViewController = segue.destination as? GameViewController {
-            gameViewController.port = sender as! Int;
+            gameViewController.port = sender as! Int
+            gameViewController.game = gameData
+            for prize in gameData["prizes"].array! {
+                let id = prize["id"].int64!
+                let prizeObject = Prize(id: id, latitude: prize["latitude"].double!, longitude: prize["longitude"].double!, color: prize["color"].string!, points: prize["points"].int!, claimer: prize["claimer"].int64!)
+                
+                gameViewController.prizes[id as! Int] = prizeObject
+            }
+            
         }
     }
 }

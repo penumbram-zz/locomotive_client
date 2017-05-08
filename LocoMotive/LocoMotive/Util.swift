@@ -39,4 +39,26 @@ class Util {
         return val
     }
     
+    class func jsonStringWithJSONObject(jsonObject: AnyObject) throws -> String? {
+        let data: Data? = try! JSONSerialization.data(withJSONObject: jsonObject, options:JSONSerialization.WritingOptions(rawValue: 0)) as Data?
+        
+        var jsonStr: String?
+        if data != nil {
+            jsonStr = String(data: data! as Data, encoding: String.Encoding.utf8)
+        }
+        
+        return jsonStr
+    }
+    
+    class func convertToDictionary(text: String) -> [String: Any]? {
+        if let data = text.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        return nil
+    }
+    
 }

@@ -22,6 +22,8 @@
 		B719B6FF1EBDF381002F0B2B /* GameLobbyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B719B6FE1EBDF381002F0B2B /* GameLobbyTableViewController.swift */; };
 		B719B7011EBE53A5002F0B2B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B719B7001EBE53A5002F0B2B /* Constants.swift */; };
 		B719B7031EBE6A6C002F0B2B /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = B719B7021EBE6A6C002F0B2B /* Util.swift */; };
+		B719B7051EBF9199002F0B2B /* SocketMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B719B7041EBF9199002F0B2B /* SocketMessage.swift */; };
+		B719B72E1EC04F98002F0B2B /* Prize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B719B72D1EC04F98002F0B2B /* Prize.swift */; };
 		B7CA8B6D1EB7CD1C00513D86 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CA8B6C1EB7CD1C00513D86 /* GameViewController.swift */; };
 		B7E25E541EB7C7640054D94B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E25E531EB7C7640054D94B /* AppDelegate.swift */; };
 		B7E25E561EB7C7640054D94B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E25E551EB7C7640054D94B /* LoginViewController.swift */; };
@@ -48,6 +50,8 @@
 		B719B6FE1EBDF381002F0B2B /* GameLobbyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameLobbyTableViewController.swift; sourceTree = "<group>"; };
 		B719B7001EBE53A5002F0B2B /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B719B7021EBE6A6C002F0B2B /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		B719B7041EBF9199002F0B2B /* SocketMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketMessage.swift; sourceTree = "<group>"; };
+		B719B72D1EC04F98002F0B2B /* Prize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prize.swift; sourceTree = "<group>"; };
 		B7CA8B6C1EB7CD1C00513D86 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		B7E25E501EB7C7640054D94B /* LocoMotive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocoMotive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7E25E531EB7C7640054D94B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +107,19 @@
 			name = "Game Lobby";
 			sourceTree = "<group>";
 		};
+		B719B72C1EC04A93002F0B2B /* Pre Game */ = {
+			isa = PBXGroup;
+			children = (
+				B719B6FD1EBDF372002F0B2B /* Game Lobby */,
+				B7E25E551EB7C7640054D94B /* LoginViewController.swift */,
+				B70D6A631EB8A0B8006BDD35 /* LobbyListViewController.swift */,
+				B70D6A6B1EB9E5C8006BDD35 /* CreateGameViewController.swift */,
+				B70D6A651EB8B090006BDD35 /* LobbyListTableViewCell.swift */,
+				B719B6BD1EBB40A4002F0B2B /* PlayerNumberSelectorViewController.swift */,
+			);
+			name = "Pre Game";
+			sourceTree = "<group>";
+		};
 		B7E25E471EB7C7640054D94B = {
 			isa = PBXGroup;
 			children = (
@@ -125,16 +142,11 @@
 			isa = PBXGroup;
 			children = (
 				B7E25E531EB7C7640054D94B /* AppDelegate.swift */,
-				B7E25E551EB7C7640054D94B /* LoginViewController.swift */,
 				B7E25E651EB7CBDB0054D94B /* NetworkManager.swift */,
-				B70D6A631EB8A0B8006BDD35 /* LobbyListViewController.swift */,
 				B7CA8B6C1EB7CD1C00513D86 /* GameViewController.swift */,
 				B719B7021EBE6A6C002F0B2B /* Util.swift */,
-				B70D6A651EB8B090006BDD35 /* LobbyListTableViewCell.swift */,
-				B70D6A6B1EB9E5C8006BDD35 /* CreateGameViewController.swift */,
-				B719B6FD1EBDF372002F0B2B /* Game Lobby */,
 				B70D6A611EB89D03006BDD35 /* User.swift */,
-				B719B6BD1EBB40A4002F0B2B /* PlayerNumberSelectorViewController.swift */,
+				B719B72C1EC04A93002F0B2B /* Pre Game */,
 				B7E25E571EB7C7640054D94B /* Main.storyboard */,
 				B7E25E5A1EB7C7640054D94B /* Assets.xcassets */,
 				B7E25E5C1EB7C7640054D94B /* LaunchScreen.storyboard */,
@@ -144,6 +156,8 @@
 				B70D6A761EB9FF89006BDD35 /* LocationManager.swift */,
 				B719B6F91EBDEBB0002F0B2B /* UITableView+Custom.swift */,
 				B719B7001EBE53A5002F0B2B /* Constants.swift */,
+				B719B7041EBF9199002F0B2B /* SocketMessage.swift */,
+				B719B72D1EC04F98002F0B2B /* Prize.swift */,
 			);
 			path = LocoMotive;
 			sourceTree = "<group>";
@@ -273,6 +287,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B719B72E1EC04F98002F0B2B /* Prize.swift in Sources */,
 				B70D6A701EB9EBFB006BDD35 /* AlertViewManager.swift in Sources */,
 				B719B6FF1EBDF381002F0B2B /* GameLobbyTableViewController.swift in Sources */,
 				B7CA8B6D1EB7CD1C00513D86 /* GameViewController.swift in Sources */,
@@ -280,6 +295,7 @@
 				B70D6A641EB8A0B8006BDD35 /* LobbyListViewController.swift in Sources */,
 				B719B6FC1EBDF225002F0B2B /* GameLobbyViewController.swift in Sources */,
 				B719B7011EBE53A5002F0B2B /* Constants.swift in Sources */,
+				B719B7051EBF9199002F0B2B /* SocketMessage.swift in Sources */,
 				B70D6A771EB9FF89006BDD35 /* LocationManager.swift in Sources */,
 				B7E25E661EB7CBDB0054D94B /* NetworkManager.swift in Sources */,
 				B719B6BE1EBB40A4002F0B2B /* PlayerNumberSelectorViewController.swift in Sources */,
