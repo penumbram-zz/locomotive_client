@@ -169,8 +169,7 @@ class GameLobbyViewController: UIViewController {
             for prize in gameData["prizes"].array! {
                 let id = prize["id"].int64!
                 let prizeObject = Prize(id: id, latitude: prize["latitude"].double!, longitude: prize["longitude"].double!, color: prize["color"].string!, points: prize["points"].int!, claimer: prize["claimer"].int64!)
-                
-                gameViewController.prizes[id as! Int] = prizeObject
+                gameViewController.prizes[Int(id)] = prizeObject
             }
             
         }

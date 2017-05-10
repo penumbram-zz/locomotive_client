@@ -45,6 +45,7 @@ class CreateGameViewController: UIViewController, CLLocationManagerDelegate, MKM
             self.mapView.addGestureRecognizer(longPressGestureRecognizer)
         }
         self.tfGameName.placeholder = "\(User.sharedInstance.name!)'s Game"
+        //self.radiusSlider.setThum
     }
     
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {

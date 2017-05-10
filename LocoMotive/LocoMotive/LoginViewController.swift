@@ -12,10 +12,14 @@ import SwiftyJSON
 class LoginViewController: UIViewController {
 
     @IBOutlet weak var tfNickname: UITextField!
+    @IBOutlet weak var lblUsername: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        let attributedText = self.lblUsername.attributedText?.mutableCopy() as! NSMutableAttributedString
+        attributedText.addAttribute(NSKernAttributeName, value: -0.7, range: NSRange(location: 0,length: attributedText.length))
+        self.lblUsername.attributedText = attributedText
     }
 
     @IBAction func btnPlayAction(_ sender: UIButton) {
