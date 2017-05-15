@@ -30,6 +30,7 @@ class LobbyListViewController: UIViewController, UITableViewDelegate, UITableVie
         self.reloadTableView()
         
         Timer.sharedInstance.timer2.setEventHandler { [weak self] in // `[weak self]` only needed if you reference `self` in this closure and you want to prevent strong reference cycle
+            self?.reloadTableViewWithoutLoading()
             
         }
         
