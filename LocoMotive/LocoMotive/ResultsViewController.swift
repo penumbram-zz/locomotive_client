@@ -17,6 +17,8 @@ class ResultsViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        dataSource.sort(by: { $0["points"].int! > $1["points"].int! })
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -30,11 +30,23 @@ class LobbyListViewController: UIViewController, UITableViewDelegate, UITableVie
         self.reloadTableView()
         
         Timer.sharedInstance.timer2.setEventHandler { [weak self] in // `[weak self]` only needed if you reference `self` in this closure and you want to prevent strong reference cycle
-            self?.reloadTableView()
+            
         }
         
         Timer.sharedInstance.timer2.resume()
         
+    }
+    
+    private func reloadTableViewWithoutLoading() {
+        NetworkManager.sharedInstance.request(urlString: "\(httpEndpoint)/game", method: .get ,parameters: nil) { [unowned self] success,json in
+            if success {
+                self.dataSource.removeAll()
+                if json.array != nil {
+                    self.dataSource = json.array!.reversed()
+                    self.tableView.reloadData()
+                }
+            }
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
