@@ -26,7 +26,19 @@ class LobbyListViewController: UIViewController, UITableViewDelegate, UITableVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         self.reloadTableView()
+        
+        Timer.sharedInstance.timer2.setEventHandler { [weak self] in // `[weak self]` only needed if you reference `self` in this closure and you want to prevent strong reference cycle
+            self?.reloadTableView()
+        }
+        
+        Timer.sharedInstance.timer2.resume()
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        Timer.sharedInstance.timer2.suspend()
     }
     
     public func reloadTableView(_ completion: (()->())? = nil) {

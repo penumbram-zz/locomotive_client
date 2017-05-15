@@ -20,7 +20,7 @@ class GameLobbyTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource.count + ((isHost) ? 0 : 1)
+        return dataSource.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -29,12 +29,8 @@ class GameLobbyTableViewController: UITableViewController {
         {
             cell = GameLobbyTableViewCell(style: .default, reuseIdentifier: "gameLobbyTableViewCell")
         }
-        if indexPath.row == dataSource.count && !isHost {
-            cell!.lblMain?.text = User.sharedInstance.name
-        } else {
-            let item = self.dataSource[indexPath.row]
-            cell!.lblMain?.text = item["nickname"].string!
-        }
+        let item = self.dataSource[indexPath.row]
+        cell!.lblMain?.text = item["nickname"].string!
 
         return cell!
     }

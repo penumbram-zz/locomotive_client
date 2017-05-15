@@ -40,10 +40,14 @@ class GameLobbyViewController: UIViewController {
                     if isSuccess {
                         let started = json["game"]["started"].bool
                         let portValue = json["game"]["port"]
+                        
                         if started! {
                             Timer.sharedInstance.timer.suspend()
                             AlertViewManager.hideLoading()
                             self?.performSegue(withIdentifier: "gameViewControllerSegue", sender: portValue.int!)
+                        } else {
+                            self?.tableViewController.dataSource = json["game"]["players"].array!
+                            self?.tableViewController.tableView.reloadData()
                         }
                         
                     }
