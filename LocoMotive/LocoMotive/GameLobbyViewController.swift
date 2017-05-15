@@ -17,78 +17,47 @@ class GameLobbyViewController: UIViewController {
     @IBOutlet weak var vNonHosts: UIView!
     @IBOutlet weak var btnStartGame: UIButton!
     
-    var timer: DispatchSourceTimer?
-    
     private func startTimer() {
-        let queue = DispatchQueue(label: "com.caner.tolga.LocoMotive.timer", attributes: .concurrent)
-        
-        timer?.cancel()        // cancel previous timer if any
-        
-        timer = DispatchSource.makeTimerSource(queue: queue)
-        
-        timer?.scheduleRepeating(deadline: .now(), interval: .seconds(5), leeway: .seconds(1))
-        
-        timer?.setEventHandler { [weak self] in // `[weak self]` only needed if you reference `self` in this closure and you want to prevent strong reference cycle
+        Timer.sharedInstance.timer.setEventHandler { [weak self] in // `[weak self]` only needed if you reference `self` in this closure and you want to prevent strong reference cycle
             print(Date())
-            
-            NetworkManager.sharedInstance.request(urlString: "\(httpEndpoint)/game/status", method: .post ,parameters: [
-                "gameId": User.sharedInstance.currentGameId,
-                "user" : [
-                    "id" : User.sharedInstance.id,
-                    "nickname" : User.sharedInstance.name
-                ]
-            ]) { [weak self] success,json in
-                var isSuccess = false
-                if success {
-                    if let code = json["code"].int, let message = json["message"].string {
-                        if code == 200 && message == "Status Update" {
-                            isSuccess = true
+            if User.sharedInstance.currentGameId != nil {
+                NetworkManager.sharedInstance.request(urlString: "\(httpEndpoint)/game/status", method: .post ,parameters: [
+                    "gameId": User.sharedInstance.currentGameId!,
+                    "user" : [
+                        "id" : User.sharedInstance.id,
+                        "nickname" : User.sharedInstance.name
+                    ]
+                ]) { [weak self] success,json in
+                    var isSuccess = false
+                    if success {
+                        if let code = json["code"].int, let message = json["message"].string {
+                            if code == 200 && message == "Status Update" {
+                                isSuccess = true
+                            }
                         }
                     }
-                }
-                
-                if isSuccess {
-                    let startTime = json["game"]["startTime"]
-                    let portValue = json["game"]["port"]
-                    if startTime != JSON.null && startTime != "" && portValue != JSON.null {
-                        AlertViewManager.hideLoading()
-                        print(startTime)
-                        let dateString = startTime.string!
-                        
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
-                        
-                        let date = dateFormatter.date(from: dateString)?.addingTimeInterval(3 * 60 * 60)
-                        print(date!)
-                        self?.stopTimer()
-                        let dif = date!.timeIntervalSince(Date())
-                        
-                        /*
-                        if dif > 5 {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + dif - 5) { [weak self] in
-                                self?.performSegue(withIdentifier: "gameViewControllerSegue", sender: portValue.int!)
-                            }
-                        } else {
+                    
+                    if isSuccess {
+                        let started = json["game"]["started"].bool
+                        let portValue = json["game"]["port"]
+                        if started! {
+                            Timer.sharedInstance.timer.suspend()
+                            AlertViewManager.hideLoading()
                             self?.performSegue(withIdentifier: "gameViewControllerSegue", sender: portValue.int!)
                         }
-                        */
-                        self?.performSegue(withIdentifier: "gameViewControllerSegue", sender: portValue.int!)
                         
                     }
-
-                } else {
-                
                 }
             }
             
+            
         }
         
-        timer?.resume()
+        Timer.sharedInstance.timer.resume()
     }
     
     private func stopTimer() {
-        timer?.cancel()
-        timer = nil
+        Timer.sharedInstance.timer.suspend()
     }
     
     override func viewDidLoad() {
@@ -106,30 +75,36 @@ class GameLobbyViewController: UIViewController {
         self.startTimer()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            AlertViewManager.hideLoading()
+        }
+    }
+    
     
     @IBAction func btnStartGameAction(_ sender: UIButton) {
         AlertViewManager.showLoading()
         let startString = Util.secondsFromNow(30)
         NetworkManager.sharedInstance.request(urlString: "\(httpEndpoint)/game/start", method: .post ,parameters: [
-            "gameId": User.sharedInstance.currentGameId,
+            "gameId": User.sharedInstance.currentGameId!,
             "user" : [
                 "id" : User.sharedInstance.id,
                 "nickname" : User.sharedInstance.name
             ],
             "startDate" : startString
-        ]) { [weak self] success,json in
+        ]) { success,json in
             var isSuccess = false
             if success {
                 if let code = json["code"].int, let message = json["message"].string {
-                    if code == 200 && message == "Game Starting" {
+                    if code == 200 && message.contains("Game ") {
                         isSuccess = true
                     }
                 }
             }
             
             if isSuccess {
-            } else {
-                
+                print("start game was success")
             }
         }
     }
@@ -152,13 +127,11 @@ class GameLobbyViewController: UIViewController {
                     }
                 }
             }
-            
-            if isSuccess {
-                self.dismiss(animated: true, completion: nil)
-            }
             AlertViewManager.hideLoading()
+            if isSuccess {
+                _ = self.navigationController?.popViewController(animated: true)
+            }
         }
-    
     }
     
     
@@ -173,5 +146,8 @@ class GameLobbyViewController: UIViewController {
             }
             
         }
+    }
+    
+    deinit {
     }
 }

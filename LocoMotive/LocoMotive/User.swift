@@ -15,6 +15,7 @@ class User {
     var id : Int64!
     var name : String!
     
-    var currentGameId : Int64!
+    var currentGameId : Int64?
+    var currentStartedId : Int64?
     
 }

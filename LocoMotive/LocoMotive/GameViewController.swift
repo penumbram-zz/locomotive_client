@@ -11,6 +11,7 @@ import SocketRocket
 import CoreLocation
 import MapKit
 import SwiftyJSON
+import SVProgressHUD
 
 let prizeRadius : CLLocationDistance = 5.0
 
@@ -20,11 +21,13 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
     var port : Int = 8884
     var game : JSON!
     var prizes : [Int : Prize] = [:]
+    var prizeCircles : [Int64 : MKCircle] = [:]
     @IBOutlet weak var lblScore: UILabel!
     @IBOutlet weak var mapView: MKMapView!
     var isFirst = true
     var isFirstAnimation = false
     var isFirstAnimationComplete = false
+    var score : Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +56,8 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
     func dismissAnimated() {
         LocationManager.sharedInstance.manager.delegate = nil
         self.webRocket.close()
-        self.dismiss(animated: true, completion: nil)
+        User.sharedInstance.currentGameId = nil
+        _ = self.navigationController?.popToRootViewController(animated: true)
     }
     
     func sendLocation(_ coordinate : CLLocationCoordinate2D) {
@@ -98,7 +102,13 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
             mapRegion.center = mapView.userLocation.coordinate;
             mapRegion.span.latitudeDelta = 0.0005
             mapRegion.span.longitudeDelta = 0.0005
-            self.mapView.setRegion(mapRegion, animated: true)
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.mapView.setRegion(mapRegion, animated: true)
+            }
+            
+            
             let userLocationView = mapView.view(for: userLocation)
             userLocationView?.canShowCallout = false
             isFirstAnimation = true
@@ -110,7 +120,7 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
         if isFirstAnimation {
             isFirstAnimation = false
             for prize in self.prizes {
-                self.addPrize(coordinate: CLLocationCoordinate2D(latitude: prize.value.latitude, longitude: prize.value.longitude))
+                self.addPrize(id: prize.value.id,coordinate: CLLocationCoordinate2D(latitude: prize.value.latitude, longitude: prize.value.longitude))
             }
             isFirstAnimationComplete = true
         }
@@ -124,9 +134,10 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
         return circleView
     }
     
-    func addPrize(coordinate : CLLocationCoordinate2D) {
+    func addPrize(id: Int64,coordinate : CLLocationCoordinate2D) {
         let prize = MKCircle(center: coordinate, radius: prizeRadius)
         self.mapView.add(prize)
+        self.prizeCircles[id] = prize
     }
     
 // MARK: SRWebSocketDelegate functions
@@ -135,10 +146,7 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
         let str = message as! String
         let dict = Util.convertToDictionary(text: str)
         if (dict != nil) {
-           print(dict!["prizes"])
-            for prize in self.prizes {
-                
-            }
+            refreshPrizes(newDict: dict!["prizes"] as! [Any],dict: self.prizes)
         }
         
     }
@@ -163,5 +171,65 @@ class GameViewController: UIViewController, SRWebSocketDelegate, CLLocationManag
     func webSocketShouldConvertTextFrame(toString webSocket: SRWebSocket!) -> Bool {
         return true
     }
+    
+    func refreshPrizes(newDict : [Any], dict : [Int : Prize]) {
+        var countClaimed = 0
+        for prize in newDict {
+            print(prize)
+            if let json = prize as? [String : Any] {
+                let id = json["id"] as! Int64
+                let pPrize = dict[Int(id)]!
+                let newClaimer = json["claimer"] as! Int64
+                if newClaimer != pPrize.claimer {
+                    pPrize.claimer = newClaimer
+                    print("a prize has a new claimer")
+                    let circle = self.prizeCircles[id]
+                    self.mapView.remove(circle!)
+                    let score = json["points"] as! Int
+                    if newClaimer == User.sharedInstance.id {
+                        updateScore(add: score)
+                    }
+                }
+                if pPrize.claimer != -1 {
+                    countClaimed += 1
+                }
+            }
+        }
+        if countClaimed == newDict.count {
+            LocationManager.sharedInstance.manager.delegate = nil
+            self.webRocket.close()
+            SVProgressHUD.show(withStatus: "GOOD GAME! \n\n PLEASE WAIT FOR RESULTS...")
+            NetworkManager.sharedInstance.request(urlString: "\(httpEndpoint)/game/result", method: .post ,parameters: [
+                "gameId": User.sharedInstance.currentGameId,
+                "user" : [
+                    "id" : User.sharedInstance.id,
+                    "nickname" : User.sharedInstance.name
+                ]
+            ]) { [unowned self] success,json in
+                if success {
+                    if json.array != nil {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                            self?.performSegue(withIdentifier: "resultsSegue", sender: json.array)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateScore(add : Int) {
+        score += add
+        self.lblScore.text = ("Score: \(score)")
+    }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "resultsSegue" {
+            if let dest = segue.destination as? ResultsViewController, sender != nil {
+                dest.dataSource = sender! as! [JSON]
+            }
+        }
+    }
+    
     
 }

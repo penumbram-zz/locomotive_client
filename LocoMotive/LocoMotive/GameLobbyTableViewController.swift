@@ -24,16 +24,16 @@ class GameLobbyTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "gameLobbyTableViewCell")
+        var cell = tableView.dequeueReusableCell(withIdentifier: "gameLobbyTableViewCell") as? GameLobbyTableViewCell
         if (cell == nil)
         {
-            cell = UITableViewCell(style: .default, reuseIdentifier: "gameLobbyTableViewCell")
+            cell = GameLobbyTableViewCell(style: .default, reuseIdentifier: "gameLobbyTableViewCell")
         }
         if indexPath.row == dataSource.count && !isHost {
-            cell!.textLabel?.text = User.sharedInstance.name
+            cell!.lblMain?.text = User.sharedInstance.name
         } else {
             let item = self.dataSource[indexPath.row]
-            cell!.textLabel?.text = item["nickname"].string!
+            cell!.lblMain?.text = item["nickname"].string!
         }
 
         return cell!

@@ -8,5 +8,6 @@
 
 import Foundation
 
-let endpoint = "http://localhost:"
+//let endpoint = "http://localhost:"
+let endpoint = "http://35.156.59.55:"
 let httpEndpoint = "\(endpoint)8080"

@@ -84,7 +84,8 @@ class LobbyListViewController: UIViewController, UITableViewDelegate, UITableVie
     func joinGame(_ item : JSON) {
         AlertViewManager.showLoading()
         if item["host_id"].int64 == User.sharedInstance.id {
-            self.performSegue(withIdentifier: "gameLobbySegue", sender: item)
+            pushGameLobby(item)
+            //   self.performSegue(withIdentifier: "gameLobbySegue", sender: item)
             AlertViewManager.hideLoading()
         } else {
             NetworkManager.sharedInstance.request(urlString: "\(httpEndpoint)/game/join", method: .post ,parameters: [
@@ -105,12 +106,23 @@ class LobbyListViewController: UIViewController, UITableViewDelegate, UITableVie
                 }
                 
                 if isSuccess {
-                    self.performSegue(withIdentifier: "gameLobbySegue", sender: item)
+                    self.pushGameLobby(item)
                 }
                 AlertViewManager.hideLoading()
             }
         }
         
+    }
+    
+    func pushGameLobby(_ item : Any) {
+        /*
+        let transition = CATransition.init()
+        transition.duration = 0.3;
+        transition.type = kCATransitionFromBottom;
+        
+        self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+        */
+        self.performSegue(withIdentifier: "gameLobbySegue", sender: item)
     }
     
     func playerNames(_ players : [JSON]?) -> String {

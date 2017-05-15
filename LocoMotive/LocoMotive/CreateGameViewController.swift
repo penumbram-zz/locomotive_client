@@ -45,7 +45,7 @@ class CreateGameViewController: UIViewController, CLLocationManagerDelegate, MKM
             self.mapView.addGestureRecognizer(longPressGestureRecognizer)
         }
         self.tfGameName.placeholder = "\(User.sharedInstance.name!)'s Game"
-        //self.radiusSlider.setThum
+        self.radiusSlider.setThumbImage(UIImage(named: "rectangle2"), for: .normal)
     }
     
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
@@ -126,10 +126,12 @@ class CreateGameViewController: UIViewController, CLLocationManagerDelegate, MKM
             
             if isSuccess {
                 User.sharedInstance.currentGameId = json["game"]["id"].int64!
-                if let vc = self.presentingViewController as? LobbyListViewController {
+                if let nvc = self.presentingViewController as? UINavigationController {
                     self.dismissAnimated({
-                        vc.reloadTableView() {
-                            vc.joinGame(json["game"])
+                        if let vc = nvc.topViewController as? LobbyListViewController {
+                            vc.reloadTableView() {
+                                vc.joinGame(json["game"])
+                            }
                         }
                     })
                 }
