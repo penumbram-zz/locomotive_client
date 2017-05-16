@@ -60,10 +60,6 @@ class GameLobbyViewController: UIViewController {
         Timer.sharedInstance.timer.resume()
     }
     
-    private func stopTimer() {
-        Timer.sharedInstance.timer.suspend()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableViewController = self.childViewControllers[0] as! GameLobbyTableViewController
@@ -84,6 +80,11 @@ class GameLobbyViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             AlertViewManager.hideLoading()
         }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        Timer.sharedInstance.timer.suspend()
     }
     
     
